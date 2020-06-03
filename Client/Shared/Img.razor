@@ -1,0 +1,29 @@
+﻿
+<div>Here is an image to be displayed:</div>
+<img src="@ImageUrl" width="200px" height="200px"/>
+
+@code {
+
+	[Parameter]
+	public string ImageUrl { get; set; }
+
+	protected override void OnAfterRender(bool firstRender)
+	{
+		if (string.IsNullOrEmpty(ImageUrl))
+		{
+			ImageUrl = "https://i.imgur.com/cliDn19.jpg";
+		}
+
+		base.OnAfterRender(firstRender);
+	}
+
+	protected override void OnInitialized()
+	{
+		if (string.IsNullOrEmpty(ImageUrl))
+		{
+			ImageUrl = "https://i.imgur.com/cliDn19.jpg";
+		}
+
+		base.OnInitialized();
+	}
+}

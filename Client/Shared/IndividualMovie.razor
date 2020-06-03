@@ -1,0 +1,29 @@
+﻿
+<div class="individual-movie-container">
+	<a href="@movieUrl">
+		<img src="@Movie.Poster" alt="Poster" class="movie-poster"/>
+	</a>
+	<p><a href="@movieUrl">@Movie.TitleBrief</a></p>
+	<div>
+		<a class="btn btn-info">Edit</a>
+		<button class="btn btn-danger" type="button" @onclick="(() => DeleteMovie.InvokeAsync(Movie))">Delete</button>
+	</div>
+</div>
+
+@code {
+
+	[Parameter]
+	public Movie Movie { get; set; }
+
+
+	[Parameter]
+	public EventCallback<Movie> DeleteMovie { get; set; }
+
+	string movieUrl;
+
+	protected override void OnInitialized()
+	{
+		movieUrl = $"movie/{Movie.Id}/{Movie.Title.Replace(" ", "-")}";
+		base.OnInitialized();
+	}
+}

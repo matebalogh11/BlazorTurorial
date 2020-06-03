@@ -1,0 +1,12 @@
+﻿@page "/"
+@inject BlazerTutorialProject.Client.Services.IRepository repoService
+
+<div>
+	<h3>Movies</h3>
+	<MovieList Movies="@repoService.GetMovies()" />
+</div>
+ 
+@code {
+
+
+}
