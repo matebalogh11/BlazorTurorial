@@ -1,0 +1,63 @@
+﻿@page "/movies/search"
+
+<h3>MovieFilter</h3>
+
+<div class="form-inline">
+	<div class="form-group mb-2">
+		<label for="Title" class="sr-only">Title</label>
+		<input type="text" class="form-control" id="title" placeholder="Movie title" @bind-value="title" @bind-value:event="oninput" />
+	</div>
+	<div class="form-group mx-sm-3 mb-2">
+		<select class="form-control" @bind="selectedGenre">
+			<option value="0">
+				--Select a genre
+			</option>
+			@foreach (var genre in Genres)
+			{
+				<option value="@genre.Id">@genre.Name</option>
+			}
+		</select>
+	</div>
+	<div class="form-group mx-sm-3 mb-2">
+		<input type="checkbox" class="form-check-input" id="upComingReleases" @bind="upComingReleases" />
+		<label class="form-check-label" for="upcomingReleases">
+			Upcoming Releases
+		</label>
+	</div>
+	<div class="form-group mx-sm-3 mb-2">
+		<input type="checkbox" class="form-check-input" id="inTheaters" @bind="inTheaters" />
+		<label class="form-check-label" for="inTheaters">
+			In Theaters
+		</label>
+	</div>
+
+	<button type="button" class="btn btn-primary mb-2 mx-sm-3" @onclick="searchForMovies">Filter</button>
+	<button type="button" class="btn btn-danger mb-2" @onclick="clear">Clear</button>
+</div>
+
+<MovieList Movies="movies">
+
+</MovieList>
+
+	@code {
+		List<Movie> movies;
+		string title = "";
+		string selectedGenre = "";
+		private List<Genre> Genres = new List<Genre>();
+		bool inTheaters;
+		bool upComingReleases;
+
+		private void titleKeyPressed(KeyboardEventArgs e)
+		{
+			if (e.Key == "Enter")
+			{
+				searchForMovies();
+			}
+		}
+
+		private void searchForMovies()
+		{ }
+
+		private void clear()
+		{ }
+	}

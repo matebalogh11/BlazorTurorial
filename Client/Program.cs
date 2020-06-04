@@ -8,6 +8,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using BlazerTutorialProject.Client.Services;
+using Blazor.FileReader;
 
 namespace BlazerTutorialProject.Client
 {
@@ -28,6 +29,7 @@ namespace BlazerTutorialProject.Client
         {
             services.AddOptions();
             services.AddTransient<IRepository, RepositoryInMemory>();
+            services.AddFileReaderService( options => options.InitializeOnFirstCall = true);
         }
     }
 }

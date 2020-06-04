@@ -1,7 +1,17 @@
-﻿@page "/person/edit"
+﻿@page "/person/edit/{PersonId:int}"
 
 <h3>EditPerson</h3>
 
-@code {
+@if (person != null)
+{ 
+	<PersonForm Person="person" OnValidSubmit="Edit"/>
+}
 
+@code {
+	[Parameter]
+	public int PersonId { get; set; }
+
+	Person person = new Person();
+
+	void Edit() { }
 }

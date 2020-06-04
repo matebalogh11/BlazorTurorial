@@ -2,6 +2,12 @@
 
 <h3>CreatePerson</h3>
 
-@code {
+<PersonForm Person="person" OnValidSubmit="Create"/>
 
+@code {
+	Person person = new Person();
+
+	void Create()
+	{ 
+	}
 }
