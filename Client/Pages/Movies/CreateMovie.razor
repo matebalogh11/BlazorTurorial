@@ -1,15 +1,27 @@
 ﻿@page "/movies/create"
-@inject NavigationManager navManager
 
-<h3>CreateMovie</h3>
-
-<button class="btn btn-primary" @onclick="SaveMovie">Save movie</button>
+<MovieForm Movie="movie" OnValidSubmit="SaveMovie" SelectedGenres="selectedGenres" NotSelectedGenres="notSelectedGenres"/>
 
 @code {
 
+	private Movie movie = new Movie();
+
+	private List<Genre> notSelectedGenres = new List<Genre>
+	{
+		new Genre { Id = 1, Name = "Comedy"},
+		new Genre { Id = 2, Name = "Action"},
+		new Genre { Id = 3, Name = "Horror"}
+	};
+
+	private List<Genre> selectedGenres = new List<Genre>
+	{
+		new Genre { Id = 4, Name = "Thriller"},
+		new Genre { Id = 5, Name = "SciFi"},
+		new Genre { Id = 6, Name = "Drama"}
+	};
+
 	void SaveMovie()
 	{
-		navManager.NavigateTo("movie/1");
-	}
 
+	}
 }

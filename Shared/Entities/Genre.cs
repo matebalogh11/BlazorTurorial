@@ -11,5 +11,7 @@ namespace BlazerTutorialProject.Shared.Entities
 
         [Required(ErrorMessage ="The name is required!")]
         public string Name { get; set; }
+
+        public List<MoviesGenres> MoviesGenres { get; set; } = new List<MoviesGenres>();
     }
 }

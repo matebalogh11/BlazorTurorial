@@ -1,0 +1,152 @@
+﻿@using System.Timers;
+@typeparam TItem
+
+<div class="blazor-typeahead">
+	<div class="blazor-typeahead__controls">
+		<input type="text" class="blazor-typeahead__input" autocomplete="off" placeholder="@PlaceHolder"
+			   @bind-value="SearchText" @onclick="ShowSuggestions" @bind-value:event="oninput" @onfocusout="onfocusout" />
+	</div>
+	@if (isSearching)
+	{
+		<div class="blazor-typeahead__results">
+			<div class="blazor-typeahead__result">
+				<span>Loading...</span>
+			</div>
+		</div>
+	}
+	else if (ShouldShowSuggestions())
+	{
+		<div class="blazor-typeahead__results">
+			@foreach (var item in Suggestions)
+			{
+				<div @key="item" class="blazor-typeahead__result" tabindex="0" @onclick="@(() => SelectSuggestion(item))"
+					 @onmouseover="MouseOverSuggestion" @onmouseout="MouseOutSuggestion">
+					@ResultTemplate(item)
+				</div>
+			}
+		</div>
+	}
+	else if (ShowNotFound())
+	{
+		<div class="blazor-typeahead__results">
+			@if (NotFoundTemplate != null)
+			{
+				<div class="blazor-typeahead__notfound">
+					@NotFoundTemplate
+				</div>
+			}
+			else
+			{
+				<div class="blazor-typeahead__notfound">
+					No results found
+				</div>
+			}
+		</div>
+	}
+</div>
+
+@code {
+	private bool isSearching;
+	private bool isShowingSuggestions;
+	private string _searchText = string.Empty;
+	private Timer _debounceTimer;
+	bool isMouseInSuggestion;
+
+
+	protected TItem[] Suggestions = new TItem[0];
+
+	protected override void OnInitialized()
+	{
+		_debounceTimer = new Timer();
+		_debounceTimer.Interval = Debounce;
+		_debounceTimer.AutoReset = false;
+		_debounceTimer.Elapsed += Search;
+		base.OnInitialized();
+	}
+
+	[Parameter]
+	public string PlaceHolder { get; set; }
+
+	[Parameter]
+	public int MinimumLength { get; set; } = 3;
+
+	[Parameter]
+	public int Debounce { get; set; } = 300;
+
+	[Parameter]
+	public Func<string, Task<IEnumerable<TItem>>> SearchMethod { get; set; }
+
+	[Parameter]
+	public RenderFragment<TItem> ResultTemplate { get; set; }
+
+	[Parameter]
+	public RenderFragment NotFoundTemplate { get; set; }
+
+	[Parameter]
+	public EventCallback<TItem> ValueChanged { get; set; }
+
+	private string SearchText
+	{
+		get => _searchText;
+		set
+		{
+			_searchText = value;
+			if (value.Length == 0)
+			{
+				isShowingSuggestions = false;
+				_debounceTimer.Stop();
+				Suggestions = new TItem[0];
+			}
+			else if (value.Length >= MinimumLength)
+			{
+				_debounceTimer.Stop();
+				_debounceTimer.Start();
+			}
+		}
+	}
+
+	private async void Search(Object source, ElapsedEventArgs e)
+	{
+		isSearching = true;
+		isShowingSuggestions = false;
+		await InvokeAsync(StateHasChanged);
+
+		Suggestions = (await SearchMethod.Invoke(_searchText)).ToArray();
+
+		isSearching = !isSearching;
+		isShowingSuggestions = !isShowingSuggestions;
+		await InvokeAsync(StateHasChanged);
+	}
+
+	private void ShowSuggestions()
+	{
+		if (Suggestions.Any())
+			isShowingSuggestions = true;
+
+	}
+
+	private void onfocusout()
+	{
+		if (!isMouseInSuggestion)
+			isShowingSuggestions = false;
+	}
+
+	private bool ShouldShowSuggestions()
+	{
+		return isShowingSuggestions && Suggestions.Any();
+	}
+
+	private async Task SelectSuggestion(TItem item)
+	{
+		SearchText = "";
+		await ValueChanged.InvokeAsync(item);
+	}
+
+	private bool ShowNotFound()
+	{
+		return !Suggestions.Any() && isShowingSuggestions;
+	}
+
+	void MouseOverSuggestion() => isMouseInSuggestion = true;
+	void MouseOutSuggestion() => isMouseInSuggestion = false;
+}
